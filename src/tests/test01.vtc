@@ -9,10 +9,10 @@ varnish v1 -vcl+backend {
 	import ratelimit from "${vmod_topbuild}/src/.libs/libvmod_ratelimit.so";
 
 	sub vcl_deliver {
-		if (ratelimit.lastseen(client.ip, "", "test") < 3) {
+		if (ratelimit.lastseen(client.ip, "", "test") < 3s) {
 		    error 500 "buhu";
                 }
-		if (ratelimit.lastseen(client.ip, "", "test") < 3) {
+		if (ratelimit.lastseen(client.ip, "", "test") < 3s) {
 		    error 200 "ok";
 		}
         }
