@@ -14,7 +14,7 @@ Ratelimit Module
 SYNOPSIS
 ========
 
-import lastseen;
+import ratelimit;
 
 DESCRIPTION
 ===========
@@ -30,7 +30,7 @@ lastseen
 Prototype
         ::
 
-                lastseen.lastseen(IP ip, STRING url, STRING tag)
+                ratelimit.lastseen(IP ip, STRING url, STRING tag)
 Return value
 	DURATION
 Description
