@@ -1,54 +1,54 @@
-============
-vmod_example
-============
+==============
+vmod_ratelimit
+==============
 
-----------------------
-Varnish Example Module
-----------------------
+----------------
+Ratelimit Module
+----------------
 
-:Author: Martin Blix Grydeland
-:Date: 2011-05-26
-:Version: 1.0
+:Author: Tobias Brox <tobias@redpill-linpro.com>
+:Date: 2012-05-31
+:Version: 0.01
 :Manual section: 3
 
 SYNOPSIS
 ========
 
-import example;
+import lastseen;
 
 DESCRIPTION
 ===========
 
-Example Varnish vmod demonstrating how to write an out-of-tree Varnish vmod.
-
-Implements the traditional Hello World as a vmod.
+This vmod allows simple rate limiting logics to be implemented in vcl.
 
 FUNCTIONS
 =========
 
-hello
------
+lastseen
+--------
 
 Prototype
         ::
 
-                hello(STRING S)
+                lastseen.lastseen(IP ip, STRING url, STRING tag)
 Return value
-	STRING
+	DURATION
 Description
-	Returns "Hello, " prepended to S
+	Returns the duration since last time the id and tag was seen - for very simple ratelimiting (i.e. "there shoud be 5 seconds between each miss from this IP").  The function doesn't care at all about the parameters, only that they are identical with some earlier call to the same function.
 Example
         ::
 
-                set resp.http.hello = example.hello("World");
+	sub vcl_miss {
+	    if (lastseen(client.ip, "", "miss") < 5) {
+	        error 429 "enhance your calm and try again in some few secs";
+	    }
+	}
+
 
 INSTALLATION
 ============
 
-This is an example skeleton for developing out-of-tree Varnish
-vmods. It implements the "Hello, World!" as a vmod callback. Not
-particularly useful in good hello world tradition, but demonstrates how
-to get the glue around a vmod working.
+This vmod will probably only work towards varnish 3.0 as for now.
 
 The source tree is based on autotools to configure the building, and
 does also have the necessary bits in place to do functional unit tests
@@ -72,20 +72,20 @@ Make targets:
 * make install - installs your vmod in `VMODDIR`
 * make check - runs the unit tests in ``src/tests/*.vtc``
 
-In your VCL you could then use this vmod along the following lines::
-        
-        import example;
-
-        sub vcl_deliver {
-                # This sets resp.http.hello to "Hello, World"
-                set resp.http.hello = example.hello("World");
-        }
-
 HISTORY
 =======
 
-This manual page was released as part of the libvmod-example package,
-demonstrating how to create an out-of-tree Varnish vmod.
+This was forked from the libvmod-example package.
+
+Version 0.01 - lastseen implemented and tested
+
+ROADMAP
+=======
+
+* Make sure "make check" works
+* Go through the installation steps
+* Spread the word
+* Make a bit more complicated ratelimit func taking a parameter `n`, storing a list of length `n` and returning the duration of the last `n` calls.  ``ratelimit(client.ip, "", "sometag", 1)`` should then be equivalent to ``lastseen(client.ip, "", "sometag")``
 
 COPYRIGHT
 =========
@@ -94,3 +94,4 @@ This document is licensed under the same license as the
 libvmod-example project. See LICENSE for details.
 
 * Copyright (c) 2011 Varnish Software
+* Copyright (c) 2012 Redpill-Linpro

@@ -1,4 +1,4 @@
-varnishtest "Test example vmod"
+varnishtest "Test rate limiting vmod"
 
 server s1 {
        rxreq
@@ -6,17 +6,22 @@ server s1 {
 } -start
 
 varnish v1 -vcl+backend {
-	import example from "${vmod_topbuild}/src/.libs/libvmod_example.so";
+	import ratelimit from "${vmod_topbuild}/src/.libs/libvmod_ratelimit.so";
 
 	sub vcl_deliver {
-		set resp.http.hello = example.hello("World");
-	}
+		if (ratelimit.lastseen(client.ip, "", "test") < 3) {
+		    error 500 "buhu";
+                }
+		if (ratelimit.lastseen(client.ip, "", "test") < 3) {
+		    error 200 "ok";
+		}
+        }
 } -start
 
 client c1 {
 	txreq -url "/"
 	rxresp
-	expect resp.http.hello == "Hello, World"
+	expect resp.http.status == 200
 }
 
 client c1 -run

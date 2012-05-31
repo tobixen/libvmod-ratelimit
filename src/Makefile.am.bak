@@ -8,10 +8,10 @@ libvmod_ratelimit_la_LDFLAGS = -module -export-dynamic -avoid-version
 libvmod_ratelimit_la_SOURCES = \
 	vcc_if.c \
 	vcc_if.h \
-	vmod_ratelimit.c
+	vmod_lastseen.c
 
-vcc_if.c vcc_if.h: $(VARNISHSRC)/lib/libvmod_std/vmod.py $(top_srcdir)/src/vmod_ratelimit.vcc
-	@PYTHON@ $(VARNISHSRC)/lib/libvmod_std/vmod.py $(top_srcdir)/src/vmod_ratelimit.vcc
+vcc_if.c vcc_if.h: $(VARNISHSRC)/lib/libvmod_std/vmod.py $(top_srcdir)/src/vmod_lastseen.vcc
+	@PYTHON@ $(VARNISHSRC)/lib/libvmod_std/vmod.py $(top_srcdir)/src/vmod_lastseen.vcc
 
 VMOD_TESTS = tests/*.vtc
 .PHONY: $(VMOD_TESTS)
@@ -22,7 +22,7 @@ tests/*.vtc:
 check: $(VMOD_TESTS)
 
 EXTRA_DIST = \
-	vmod_ratelimit.vcc \
+	vmod_lastseen.vcc \
 	$(VMOD_TESTS)
 
 CLEANFILES = $(builddir)/vcc_if.c $(builddir)/vcc_if.h
