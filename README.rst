@@ -37,13 +37,12 @@ Description
 	Returns the duration since last time the id and tag was seen - for very simple ratelimiting (i.e. "there shoud be 5 seconds between each miss from this IP").  The function doesn't care at all about the parameters, only that they are identical with some earlier call to the same function.
 Example
         ::
-        ``
 	sub vcl_miss {
 	    if (lastseen(client.ip, "", "miss") < 5s) {
 	        error 429 "enhance your calm and try again in some few secs";
 	    }
 	}
-        ``
+
 
 INSTALLATION
 ============
