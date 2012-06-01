@@ -19,7 +19,7 @@ import ratelimit;
 DESCRIPTION
 ===========
 
-This vmod allows simple rate limiting logics to be implemented in vcl.
+This vmod allows simple rate limiting logics to be implemented in vcl.  (this does not work out very well at the moment due to a varnish-bug or perhaps a misunderstanding - see https://www.varnish-cache.org/trac/ticket/1145 )
 
 FUNCTIONS
 =========
