@@ -8,8 +8,8 @@ server s1 {
 varnish v1 -vcl+backend {
 	import ratelimit from "${vmod_topbuild}/src/.libs/libvmod_ratelimit.so";
 
-	sub vcl_miss {
-		if (ratelimit.lastseen(client.ip, "", "test") < 3s) {
+	sub vcl_recv {
+		if (ratelimit.lastseen(client.ip, req.url, "test43") < 3s) {
 		    error 429 "rate limit";
                 }
         }
@@ -20,6 +20,9 @@ client c1 {
 	rxresp
 	expect resp.status == 200
 	txreq -url "/foo"
+	rxresp
+	expect resp.status == 200
+	txreq -url "/"
 	rxresp
 	expect resp.status == 429
 }
