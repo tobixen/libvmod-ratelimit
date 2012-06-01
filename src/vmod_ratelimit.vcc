@@ -1,3 +1,2 @@
 Module ratelimit
-Init init_function
-Function DURATION lastseen(PRIV_CALL, PRIV_VCL, IP, STRING, STRING)
+Function DURATION lastseen(PRIV_CALL, IP, STRING, STRING)

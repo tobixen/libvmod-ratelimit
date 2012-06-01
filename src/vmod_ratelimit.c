@@ -9,11 +9,11 @@
 
 
 double 
-vmod_lastseen(struct sess *sp, struct vmod_priv *pc, struct vmod_priv *pv, struct sockaddr_storage *ip, const char *id, const char *tag)
+vmod_lastseen(struct sess *sp, struct vmod_priv *pc, struct sockaddr_storage *ip, const char *id, const char *tag)
 /* pc = private data for the call - we use it for storing the timestamp */
-/* pv = private data for the vmod */
 {
   double last_seen;
+  struct timeval tv;
 
   if (!pc->priv) {
     /* if varnish hasn't seen the function parameters before (or after
@@ -31,27 +31,12 @@ vmod_lastseen(struct sess *sp, struct vmod_priv *pc, struct vmod_priv *pv, struc
   /* return time is supposed to be a double ... so to get higher
      precision than integer seconds, will need to use gettimeofday
      instead of a simple time */
-  gettimeofday(pv->priv, NULL);
+  gettimeofday(&tv, NULL);
 
   /* set pc->priv to current time */
-  *((double *)pc->priv) = (*((struct timeval *)pv->priv)).tv_sec+((*((struct timeval *)pv->priv)).tv_usec/1000000.0);
+  *((double *)pc->priv) = tv.tv_sec+tv.tv_usec/1000000.0;
 
   /* return the difference between current time and last seen time */
   return *((double *)pc->priv) - last_seen;
-}
-
-/* for performance reasons, we allocate space for a timeval globally
-   and once and reference it by the vmod private pointer */
-/* TODO ... reconsider?  this causes some needless thread-unsafety?
-   how costly is it to allocate memory?  We already have one local
-   variable in the vmod_lastseen function, it wouldn't be that costly
-   to add one more, would it? */
-int
-init_function(struct vmod_priv *priv, const struct VCL_conf *cfg)
-{
-  priv->priv = malloc(sizeof(struct timeval));
-  AN(priv->priv);
-  priv->free = free;
-  return (0);
 }
 
