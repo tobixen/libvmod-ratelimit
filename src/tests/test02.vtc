@@ -1,8 +1,10 @@
 varnishtest "Test rate limiting vmod"
 
 server s1 {
+    loop 3 {
        rxreq
        txresp
+    }
 } -start
 
 varnish v1 -vcl+backend {

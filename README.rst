@@ -19,7 +19,9 @@ import ratelimit;
 DESCRIPTION
 ===========
 
-This vmod allows simple rate limiting logics to be implemented in vcl.  (this does not work out very well at the moment due to a varnish-bug or perhaps a misunderstanding - see https://www.varnish-cache.org/trac/ticket/1145 )
+This vmod should allow simple rate limiting logics to be implemented in vcl.
+
+Bummer - this module does not work as intended due to a misunderstanding of the API - see https://www.varnish-cache.org/trac/ticket/1145 ).  Not sure when I will get time to fix it, but hopefully before the summer.
 
 FUNCTIONS
 =========
@@ -34,7 +36,7 @@ Prototype
 Return value
         DURATION
 Description
-        Returns the duration since last time the id and tag was seen - for very simple ratelimiting (i.e. "there shoud be 5 seconds between each miss from this IP").  The function doesn't care at all about the parameters, only that they are identical with some earlier call to the same function.
+        Returns the duration since last time the id and tag was seen - for very simple ratelimiting (i.e. "there should be 5 seconds between each miss from this IP").  The function doesn't care at all about the parameters, only that they are identical with some earlier call to the same function.
 Example
         ::
 
@@ -43,6 +45,8 @@ Example
                         error 429 "enhance your calm and try again in some few secs";
                     }
                   }
+Comments
+        I'm wondering a bit if it would be better to pass a STRING_LIST - but not sure if that's working as intended.  According to the varnish documentation it should be fine to pass the ip when a string is expected - in practice I had to cast the IP to a string (did it through "" + client.ip).  I also got errors when attempting to pass multiple variables for the STRING_LIST - doesn't seem to be documented anywhere how to use a function accepting a STRING_LIST from the vcl.
 
 
 INSTALLATION
